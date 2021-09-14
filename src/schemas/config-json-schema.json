@@ -1,0 +1,46 @@
+{
+    "$id": "configdata",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "DEPLOY_CONFIG_DATA": {
+            "properties": {
+                "desc": {
+                    "description": "自定义发布备注, 默认取最近一次git commit message",
+                    "type": "string"
+                },
+                "privateKeyPath": {
+                    "description": "私钥路径，在获取项目属性和上传时用于鉴权使用，在 微信公众平台 上使用小程序管理员登录后下载",
+                    "type": "string"
+                },
+                "projectPath": {
+                    "description": "项目的路径，即 project.config.json 所在的目录",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "configdata#/definitions/ProjectType",
+                    "description": "项目的类型，有效值 miniProgram/miniProgramPlugin/miniGame/miniGamePlugin"
+                },
+                "version": {
+                    "description": "自定义发布版本号, 默认取package.json中的version字段",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "privateKeyPath",
+                "projectPath",
+                "type"
+            ],
+            "type": "object"
+        },
+        "ProjectType": {
+            "enum": [
+                "miniGame",
+                "miniGamePlugin",
+                "miniProgram",
+                "miniProgramPlugin"
+            ],
+            "type": "string"
+        }
+    }
+}
+

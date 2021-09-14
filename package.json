@@ -1,0 +1,38 @@
+{
+  "name": "miniprogram-deploy-ci",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "bin": {
+    "mp-deploy": "bin/index.js"
+  },
+  "scripts": {
+    "start": "tsc --watch",
+    "build": "rm -rf dist && npm run update-json-schema && tsc",
+    "publish": "npm run build && npm publish",
+    "update-json-schema": "typescript-json-schema 'src/types/config-json.ts' '*' --out=src/schemas/config-json-schema.json --id=configdata --required  --strictNullChecks"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sunxiuguo/miniprogram-deploy-ci"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sunxiuguo/miniprogram-deploy-ci/issues"
+  },
+  "homepage": "https://github.com/sunxiuguo/miniprogram-deploy-ci#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.9.0",
+    "commander": "^8.2.0",
+    "inquirer": "^8.1.2",
+    "jsonschema": "^1.4.0",
+    "miniprogram-ci": "^1.6.1",
+    "simple-git": "^2.45.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3",
+    "typescript-json-schema": "^0.50.1"
+  }
+}
