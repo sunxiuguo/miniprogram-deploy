@@ -93,7 +93,7 @@ export class MiniprogramCi {
         const { subPackageInfo = [] } = result;
 
         const packageTable = new Table({
-            head: ['Type', 'Size'],
+            head: ['PackageType', 'Size'],
         });
 
         const packageTypeMap: any = {
@@ -103,7 +103,7 @@ export class MiniprogramCi {
 
         subPackageInfo.forEach(packageInfo => {
             const formatSize = bytesToSize(packageInfo.size);
-            packageTable.push([packageTypeMap[packageInfo.name] || 'sub', formatSize]);
+            packageTable.push([packageTypeMap[packageInfo.name] || 'subpackage', formatSize]);
         });
 
         return packageTable.toString();
