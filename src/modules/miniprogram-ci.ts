@@ -1,9 +1,11 @@
 import { preview, Project, upload } from 'miniprogram-ci';
+import { IInnerUploadResult } from 'miniprogram-ci/dist/@types/ci/upload';
 import { DEPLOY_CONFIG_DATA } from '../types/config-json';
 import { ProjectConfig } from '../types/project-config';
 import { ConsoleOutput } from './console';
-import { checkDeployConfigFile, getProjectConfig, writeDeployConfigFile } from './fs';
+import { bytesToSize, checkDeployConfigFile, getProjectConfig, writeDeployConfigFile } from './fs';
 import { getLatestCommitMsg } from './git';
+import Table from 'cli-table3';
 
 export class MiniprogramCi {
     private deployOptions: DEPLOY_CONFIG_DATA | null = null;
@@ -67,31 +69,15 @@ export class MiniprogramCi {
                     ...this.projectConfig?.setting,
                     minify: true
                 },
-                onProgressUpdate: (taskStatus: any) => {
-                    let msg = taskStatus._msg;
-
-                    if (msg) {
-                        if (msg.indexOf('http') > -1) {
-                            return;
-                        }
-
-                        const isWxmlTask = /(\/|json|wxss|wxml|js)/.test(msg);
-                        msg = isWxmlTask ? `[Compile] ${msg}` : msg;
-
-                        if (taskStatus._status === 'done') {
-                            ConsoleOutput.ok(msg);
-                        } else {
-                            ConsoleOutput.pending(msg);
-                        }
-                    }
-                },
+                onProgressUpdate: this.handleProgress,
                 threads: os.cpus.length
             });
+
+            const resultTable = this.handleUploadResult(uploadResult);
             
-            // ConsoleOutput.ok(`upload success, ${JSON.stringify(uploadResult)}`);
+            ConsoleOutput.info(`Below is the uploaded package information table.\n${resultTable}`);
         } catch (error: any) {
             ConsoleOutput.error(error.message);
-            // ConsoleOutput.error(error.message);
         } finally {
             process.exit(1);
         }
@@ -102,4 +88,40 @@ export class MiniprogramCi {
             return;
         }
     }
+
+    private handleUploadResult(result: IInnerUploadResult) {
+        const { subPackageInfo = [] } = result;
+
+        const packageTable = new Table({
+            head: ['Type', 'Size'],
+        });
+
+        const packageTypeMap: any = {
+            '__FULL__': 'all',
+            '__APP__': 'main'
+        }
+
+        subPackageInfo.forEach(packageInfo => {
+            const formatSize = bytesToSize(packageInfo.size);
+            packageTable.push([packageTypeMap[packageInfo.name] || 'sub', formatSize]);
+        });
+
+        return packageTable.toString();
+    }
+
+    private handleProgress(taskStatus: any) {
+        let msg = taskStatus._msg;
+
+        if (msg) {
+            const isWxmlTask = /(\/|json|wxss|wxml|js)/.test(msg);
+            msg = isWxmlTask ? `[Compile] ${msg}` : msg;
+
+            if (taskStatus._status === 'done') {
+                ConsoleOutput.ok(msg);
+            } else {
+                ConsoleOutput.pending(msg);
+            }
+        }
+    }
+
 }
