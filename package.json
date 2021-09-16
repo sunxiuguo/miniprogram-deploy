@@ -29,6 +29,7 @@
     "inquirer": "^8.1.2",
     "jsonschema": "^1.4.0",
     "miniprogram-ci": "^1.6.1",
+    "ora": "^4.0.0",
     "simple-git": "^2.45.1"
   },
   "devDependencies": {

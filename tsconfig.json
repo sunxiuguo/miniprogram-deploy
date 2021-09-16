@@ -15,9 +15,10 @@
       "noImplicitReturns": true,
       "suppressImplicitAnyIndexErrors": true,
       "declaration": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
     },
-    "include": [ "./src" ],
+    "include": [ "./src", "node_modules/ora" ],
     "exclude": [
       "node_modules",
       "dist",

@@ -1,3 +1,4 @@
+import { Spinner } from './spinner';
 import { preview, Project, upload } from 'miniprogram-ci';
 import { DEPLOY_CONFIG_DATA } from '../types/config-json';
 import { ProjectConfig } from '../types/project-config';
@@ -5,11 +6,11 @@ import { ConsoleOutput } from './console';
 import { checkDeployConfigFile, getProjectConfig, writeDeployConfigFile } from './fs';
 import { getLatestCommitMsg } from './git';
 
-
 export class MiniprogramCi {
     private deployOptions: DEPLOY_CONFIG_DATA | null = null;
     private project: Project | null = null;
     private projectConfig: ProjectConfig | null = null;
+    private uploadSpinner: Spinner | null  = null;
     
     constructor(private rootPath: string) {
         this.deployOptions = checkDeployConfigFile(this.rootPath);
@@ -49,26 +50,39 @@ export class MiniprogramCi {
             // TODO 检查是否存在this.project
             return;
         }
+        this.uploadSpinner = new Spinner('Ready to upload...');
+
         const { version, desc } = this.deployOptions;
 
         const os = require('os');
         const packageJson = require(`${this.rootPath}/package.json`);
         const info = await getLatestCommitMsg(this.rootPath);
+
+        this.uploadSpinner.setText('get latest commit messsage succeed');
             
         try {
             const uploadResult = await upload({
                 project: this.project,
                 version: version || packageJson.version,
                 desc: desc || info,
-                setting: this.projectConfig?.setting || {},
-                onProgressUpdate: console.log,
-                // @ts-ignore
+                setting: {
+                    ...this.projectConfig?.setting,
+                    "minifyWXSS": true
+                },
+                onProgressUpdate: (taskStatus: any) => {
+                    const msg = taskStatus._msg;
+                    if (msg) {
+                        this.uploadSpinner!.setText(msg, taskStatus._status === 'done');
+                    }
+                },
                 threads: os.cpus.length
             });
-        
-            ConsoleOutput.ok(`upload success, ${JSON.stringify(uploadResult)}`);
+            
+            this.uploadSpinner.succeed('upload completed');
+            // ConsoleOutput.ok(`upload success, ${JSON.stringify(uploadResult)}`);
         } catch (error: any) {
-            ConsoleOutput.error(error.message);
+            this.uploadSpinner.fail(error.message);
+            // ConsoleOutput.error(error.message);
         } finally {
             process.exit(1);
         }

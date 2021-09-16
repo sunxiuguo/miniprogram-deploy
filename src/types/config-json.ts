@@ -9,6 +9,6 @@ export interface DEPLOY_CONFIG_DATA {
     version?: string;
     /** 自定义发布备注, 默认取最近一次git commit message */
     desc?: string;
-    /** 项目的路径，即 project.config.json 所在的目录 */
+    /** 打包后项目的路径，即 打包后project.config.json 所在的目录 */
     projectPath: string;
 }

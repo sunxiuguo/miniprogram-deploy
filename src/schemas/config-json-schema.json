@@ -13,7 +13,7 @@
                     "type": "string"
                 },
                 "projectPath": {
-                    "description": "项目的路径，即 project.config.json 所在的目录",
+                    "description": "打包后项目的路径，即 打包后project.config.json 所在的目录",
                     "type": "string"
                 },
                 "type": {

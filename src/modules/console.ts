@@ -1,19 +1,19 @@
 import chalk from 'chalk';
 export class ConsoleOutput {
     public static info(msg: string) {
-        console.log(`${chalk.bgBlack.bold.inverse('Info')} ${chalk.white(msg)}`)
+        console.log(`${chalk.white(`[INFO] ${msg}`)}`)
     }
 
     public static warn(msg: string) {
-        console.log(`${chalk.bgYellow.bold.inverse('Warning')} ${chalk.yellow(msg)}`)
+        console.log(`${chalk.yellow(`[WARING] ${msg}`)}`)
     }
 
     public static ok(msg: string) {
-        console.log(`${chalk.bgGreen.bold.inverse('MileStone')} ${chalk.green(msg)}`)
+        console.log(`${chalk.green(`[SUCCEED] ${msg}`)}`)
     }
 
     public static error(msg: string) {
-        console.log(`${chalk.bgRed.bold.inverse('Error')} ${chalk.red(msg)}`)
+        console.log(`${chalk.red(`[ERROR] ${msg}`)}`)
 
     }
 
