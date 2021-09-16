@@ -28,7 +28,7 @@
     "miniprogram-cli",
     "mp-deploy-cli",
     "nodejs"
-],
+  ],
   "homepage": "https://github.com/sunxiuguo/mp-deploy-cli#README",
   "dependencies": {
     "chalk": "^4.1.2",
