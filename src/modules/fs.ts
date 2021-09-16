@@ -16,7 +16,7 @@ export function checkDeployConfigFile(rootDir: string): DEPLOY_CONFIG_DATA | nul
     
         // 校验失败，数据不符合预期
         if (!result.valid) {
-            ConsoleOutput.error(result.errors.map((item) => item.toString()).join('\n'));
+            ConsoleOutput.error(`${CONFIG_FILE_NAME} check failed \n${result.errors.map((item) => item.toString()).join('\n')}`);
             return null;
         }
     

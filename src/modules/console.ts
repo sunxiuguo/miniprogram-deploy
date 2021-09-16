@@ -1,24 +1,61 @@
+/**
+ * https://github.com/sindresorhus/cli-spinners/blob/main/spinners.json 已提供的spinner类型
+ */
 import chalk from 'chalk';
+import ora, { Ora } from 'ora';
+import { SpinnerName } from '../types/spinner';
+
 export class ConsoleOutput {
+    private static get spinner() {
+        if (!this._spinner) {
+            this._spinner = ora('').start();
+        }
+        return this._spinner;
+    }
+
+    public static pending(msg: string) {
+        this.spinner.spinner = 'dots';
+        this.spinner.start(`${chalk.white(msg)}`);
+    }
+
     public static info(msg: string) {
-        console.log(`${chalk.white(`[INFO] ${msg}`)}`)
+        this.stopAndPersist(`${chalk.white(msg)}`, '🎄');
     }
 
     public static warn(msg: string) {
-        console.log(`${chalk.yellow(`[WARING] ${msg}`)}`)
+        this.spinnerWarn(`${chalk.yellow(msg)}`)
     }
 
     public static ok(msg: string) {
-        console.log(`${chalk.green(`[SUCCEED] ${msg}`)}`)
+        this.spinnerSucceed(msg);
     }
 
     public static error(msg: string) {
-        console.log(`${chalk.red(`[ERROR] ${msg}`)}`)
-
+        this.spinnerFail(`${chalk.red(msg)}`)
     }
 
-    // public static getChalkMsg(fontColor: string, label: string, msg: string) {
-    //     const bgColor = `bg${fontColor[0].toUpperCase()}${fontColor.slice(1)}`;
-    //     return `${chalk[bgColor].bold.inverse(label)} ${chalk[fontColor](msg)}`
-    // }
+    private static _spinner: Ora | null = null;
+
+    private static setSpinnerText(text: string) {
+        this.spinner.text = text;
+    }
+
+    private static stopAndPersist(text: string, symbol?: string) {
+        this.spinner.stopAndPersist({
+            text,
+            symbol
+        })
+    }
+
+    private static spinnerSucceed(text: string) {
+        this.spinner.succeed(text);
+    }
+
+    private static spinnerFail(text: string) {
+        this.spinner.fail(text);
+    }
+
+    private static spinnerWarn(text: string) {
+        this.spinner.warn(text);
+    }
 }

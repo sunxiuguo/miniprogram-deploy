@@ -1,4 +1,3 @@
-import { Spinner } from './spinner';
 import { preview, Project, upload } from 'miniprogram-ci';
 import { DEPLOY_CONFIG_DATA } from '../types/config-json';
 import { ProjectConfig } from '../types/project-config';
@@ -10,7 +9,6 @@ export class MiniprogramCi {
     private deployOptions: DEPLOY_CONFIG_DATA | null = null;
     private project: Project | null = null;
     private projectConfig: ProjectConfig | null = null;
-    private uploadSpinner: Spinner | null  = null;
     
     constructor(private rootPath: string) {
         this.deployOptions = checkDeployConfigFile(this.rootPath);
@@ -50,7 +48,7 @@ export class MiniprogramCi {
             // TODO 检查是否存在this.project
             return;
         }
-        this.uploadSpinner = new Spinner('Ready to upload...');
+        ConsoleOutput.pending('Getting latest commit messsage');
 
         const { version, desc } = this.deployOptions;
 
@@ -58,7 +56,7 @@ export class MiniprogramCi {
         const packageJson = require(`${this.rootPath}/package.json`);
         const info = await getLatestCommitMsg(this.rootPath);
 
-        this.uploadSpinner.setText('get latest commit messsage succeed');
+        ConsoleOutput.ok('Get latest commit messsage succeed');
             
         try {
             const uploadResult = await upload({
@@ -67,21 +65,32 @@ export class MiniprogramCi {
                 desc: desc || info,
                 setting: {
                     ...this.projectConfig?.setting,
-                    "minifyWXSS": true
+                    minify: true
                 },
                 onProgressUpdate: (taskStatus: any) => {
-                    const msg = taskStatus._msg;
+                    let msg = taskStatus._msg;
+
                     if (msg) {
-                        this.uploadSpinner!.setText(msg, taskStatus._status === 'done');
+                        if (msg.indexOf('http') > -1) {
+                            return;
+                        }
+
+                        const isWxmlTask = /(\/|json|wxss|wxml|js)/.test(msg);
+                        msg = isWxmlTask ? `[Compile] ${msg}` : msg;
+
+                        if (taskStatus._status === 'done') {
+                            ConsoleOutput.ok(msg);
+                        } else {
+                            ConsoleOutput.pending(msg);
+                        }
                     }
                 },
                 threads: os.cpus.length
             });
             
-            this.uploadSpinner.succeed('upload completed');
             // ConsoleOutput.ok(`upload success, ${JSON.stringify(uploadResult)}`);
         } catch (error: any) {
-            this.uploadSpinner.fail(error.message);
+            ConsoleOutput.error(error.message);
             // ConsoleOutput.error(error.message);
         } finally {
             process.exit(1);
