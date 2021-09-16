@@ -1,7 +1,7 @@
 {
   "name": "mp-deploy-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "nodejs cli based on miniprogram-cli",
   "main": "bin/index.js",
   "bin": {
     "mp-deploy-cli": "bin/index.js"
@@ -25,7 +25,9 @@
     "npm",
     "miniprogram",
     "cli",
-    "miniprogram-cli"
+    "miniprogram-cli",
+    "mp-deploy-cli",
+    "nodejs"
 ],
   "homepage": "https://github.com/sunxiuguo/mp-deploy-cli#README",
   "dependencies": {
