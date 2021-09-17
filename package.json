@@ -1,10 +1,10 @@
 {
-  "name": "mp-deploy-cli",
+  "name": "miniprogram-deploy",
   "version": "1.0.0",
-  "description": "nodejs cli based on miniprogram-cli",
+  "description": "miniprogram deploy cli based on miniprogram-ci",
   "main": "bin/index.js",
   "bin": {
-    "mp-deploy-cli": "bin/index.js"
+    "miniprogram-deploy": "bin/index.js"
   },
   "scripts": {
     "start": "tsc --watch",
@@ -14,22 +14,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sunxiuguo/mp-deploy-cli"
+    "url": "https://github.com/sunxiuguo/miniprogram-deploy"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sunxiuguo/mp-deploy-cli/issues"
+    "url": "https://github.com/sunxiuguo/miniprogram-deploy/issues"
   },
   "keywords": [
     "npm",
     "miniprogram",
     "cli",
     "miniprogram-cli",
-    "mp-deploy-cli",
+    "miniprogram-deploy",
     "nodejs"
   ],
-  "homepage": "https://github.com/sunxiuguo/mp-deploy-cli#README",
+  "homepage": "https://github.com/sunxiuguo/miniprogram-deploy#README",
   "dependencies": {
     "chalk": "^4.1.2",
     "cli-progress": "^3.9.0",

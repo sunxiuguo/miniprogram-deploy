@@ -1,31 +1,31 @@
 # 微信小程序自动部署工具
 
-本工具以配置文件+命令的方式, 基于miniprogram-cli完成微信小程序的自动化上传. 
+本工具以配置文件+命令的方式, 基于miniprogram-ci完成微信小程序的自动化上传. 
 
 ## 一、如何使用
 
 ### **安装**
 
-`npm install -g mp-deploy-cli`
+`npm install -g miniprogram-deploy`
 
 ### **配置文件**
 
-* 自动创建：在小程序项目根目录运行命令 `mp-deploy-cli init`
+* 自动创建：在小程序项目根目录运行命令 `miniprogram-deploy init`
 * 手动创建：在小程序项目根目录新建配置文件 mp-deploy.config.json, 格式参考下方 init命令的描述.
 ### **上传**
 
-在小程序项目根目录运行命令 `mp-deploy-cli upload`
+在小程序项目根目录运行命令 `miniprogram-deploy upload`
 
 
 ## 二、命令
 
 ### **init**
 
-`mp-deploy-cli init`
+`miniprogram-deploy init`
 
 第一次运行upload之前, 需要初始化mp-deploy.config.json配置文件.
 
-只需要初始化一次, 后续只需要单独运行 `mp-deploy-cli upload`即可完成微信小程序的上传.
+只需要初始化一次, 后续只需要单独运行 `miniprogram-deploy upload`即可完成微信小程序的上传.
 
 
 ```json
@@ -60,13 +60,13 @@
 
 ### **doctor**
 
-`mp-deploy-cli doctor`
+`miniprogram-deploy doctor`
 
 校验mp-deploy.config.json配置文件是否符合要求.
 
 ### **upload**
 
-`mp-deploy-cli upload`
+`miniprogram-deploy upload`
 
 上传打包后的小程序包, 实时输出上传进度, 最终打印上传包的结果.
 
@@ -75,12 +75,12 @@
 
 ### **-V**
 
-`mp-deploy-cli -V`
+`miniprogram-deploy -V`
 
 查看当前cli版本
 
 ### **-h**
 
-`mp-deploy-cli -h`
+`miniprogram-deploy -h`
 
 查看当前cli所有的命令和选项
