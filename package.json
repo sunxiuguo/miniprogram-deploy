@@ -45,5 +45,5 @@
     "typescript": "^4.4.3",
     "typescript-json-schema": "^0.50.1"
   },
-  "files": ["**/*"]
+  "files": ["bin", "dist"]
 }
