@@ -1,6 +1,6 @@
 {
   "name": "miniprogram-deploy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "miniprogram deploy cli based on miniprogram-ci",
   "main": "bin/index.js",
   "bin": {
