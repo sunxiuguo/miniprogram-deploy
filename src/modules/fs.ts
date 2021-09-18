@@ -24,7 +24,7 @@ export function checkDeployConfigFile(rootDir: string): DEPLOY_CONFIG_DATA | nul
         return JSON.parse(data);
     } catch (err: any) {
         ConsoleOutput.error(err.message);
-        ConsoleOutput.info(`please run "mp-deploy -i" to init config file`);
+        ConsoleOutput.info(`please run "miniprogram-deploy init" to init config file`);
         return null;
     }
 }
