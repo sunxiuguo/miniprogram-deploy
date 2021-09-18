@@ -1,6 +1,6 @@
 {
   "name": "miniprogram-deploy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "miniprogram deploy cli based on miniprogram-ci",
   "main": "bin/index.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "start": "tsc --watch",
     "build": "rm -rf dist && npm run update-json-schema && tsc",
-    "publish": "npm run build && npm publish",
+    "prepublishOnly": "npm run build",
     "update-json-schema": "typescript-json-schema 'src/types/config-json.ts' '*' --out=src/schemas/config-json-schema.json --id=configdata --required  --strictNullChecks"
   },
   "repository": {
