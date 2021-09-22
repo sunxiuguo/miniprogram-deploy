@@ -32,7 +32,6 @@
   "homepage": "https://github.com/sunxiuguo/miniprogram-deploy#README",
   "dependencies": {
     "chalk": "^4.1.2",
-    "cli-progress": "^3.9.0",
     "cli-table3": "^0.6.0",
     "commander": "^8.2.0",
     "inquirer": "^8.1.2",

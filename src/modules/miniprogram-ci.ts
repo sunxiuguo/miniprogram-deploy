@@ -18,9 +18,7 @@ export class MiniprogramCi {
     }
 
     private initProject() {
-        // TODO 校验this.deployOptions的逻辑提取成公共的, 无论是装饰器还是方法
         if (!this.deployOptions) {
-            // TODO 
             return;
         }
         this.projectConfig = getProjectConfig(this.deployOptions.projectPath);
@@ -47,7 +45,6 @@ export class MiniprogramCi {
         }
 
         if (!this.project) {
-            // TODO 检查是否存在this.project
             return;
         }
         ConsoleOutput.pending('Getting latest commit messsage');
