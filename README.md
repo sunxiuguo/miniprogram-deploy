@@ -89,3 +89,39 @@
 `miniprogram-deploy -h`
 
 查看当前cli所有的命令和选项
+
+## 四、CI 与故障排查 / CI and troubleshooting
+
+### 退出状态 / Exit status
+
+- `doctor`：配置文件存在、JSON 可解析且通过 schema 校验时退出码为 `0`，否则为 `1`。它不会验证密钥、IP 白名单或微信接口是否可用。
+- `upload`：上传成功并输出包信息后正常结束；配置、项目初始化、版本/备注读取或 SDK 上传失败时退出码为 `1`。CI 可以直接依据命令的退出状态判断成功或失败，无需忽略错误。
+
+- `doctor` exits with `0` for a readable, parseable, schema-valid configuration, or `1` otherwise. It does not verify credentials, IP allowlists, or connectivity to WeChat.
+- `upload` finishes normally after a successful upload and package report. Configuration, project initialization, version/description lookup, and SDK upload failures exit with `1`. CI should check the command's exit status rather than suppressing failures.
+
+### 常见问题 / Common problems
+
+1. 配置检查失败：在项目根目录运行 `miniprogram-deploy doctor`，按输出修复 `mp-deploy.config.json`；还未创建配置时先运行 `miniprogram-deploy init`。
+   Configuration validation fails: run `miniprogram-deploy doctor` from your project root and fix the reported fields in `mp-deploy.config.json`. Run `miniprogram-deploy init` first if the file does not exist.
+2. 找不到项目配置：确认 `projectPath` 指向构建产物中 `project.config.json` 所在目录，并在上传前完成小程序构建。相对路径按命令的当前工作目录解析。
+   Project configuration is missing: build the mini program first and point `projectPath` to the directory containing the generated `project.config.json`. Relative paths are resolved from the command's working directory.
+3. 版本或备注读取失败：当前实现上传前会读取根目录的 `package.json` 和最近的 Git 提交，即使配置了自定义版本或备注，也需要可读取的 `package.json` 和可用的 Git 仓库。
+   Version or description lookup fails: the current implementation reads the root `package.json` and latest Git commit before uploading, including when custom values are configured. Keep both the package file and Git repository available.
+4. SDK 报告鉴权错误：检查管理员配置的代码上传密钥和 IP 白名单。不要将私钥、访问令牌或完整敏感日志提交到仓库或 issue。
+   The SDK reports an authentication error: check the administrator-configured upload key and IP allowlist. Never commit private keys or access tokens, or paste sensitive logs into issues.
+
+### 本地测试 / Local tests
+
+```sh
+npm ci
+npm test
+```
+
+`npm test` 会重新生成 JSON schema、编译 TypeScript，然后在独立子进程中测试 CLI 的成功/失败退出状态、错误传播、CPU 线程数和输出。测试替换了微信 SDK、Git 和交互输入，不读取真实密钥、不进行真实上传。GitHub Actions 在 Node.js 22 和 24 上运行同一套测试。
+
+`npm test` regenerates the JSON schema, compiles TypeScript, and tests CLI success/failure exit statuses, error propagation, CPU thread counts, and output in isolated child processes. Tests replace the WeChat SDK, Git, and interactive input; they do not read real credentials or perform real uploads. GitHub Actions runs the same checks on Node.js 22 and 24.
+
+这些测试只验证 CLI 包装层，不代表微信服务或历史 SDK 依赖在所有 Node.js 版本上的端到端兼容性。
+
+These tests validate the CLI wrapper, not end-to-end compatibility with WeChat services or the legacy SDK dependency tree on every Node.js version.

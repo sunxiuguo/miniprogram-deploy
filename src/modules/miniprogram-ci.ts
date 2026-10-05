@@ -41,11 +41,11 @@ export class MiniprogramCi {
 
     async upload() {
         if (!this.deployOptions) {
-            return;
+            throw new Error('Upload requires a valid mp-deploy.config.json');
         }
 
         if (!this.project) {
-            return;
+            throw new Error('Upload requires an accessible project.config.json');
         }
         ConsoleOutput.pending('Getting latest commit messsage');
 
@@ -57,27 +57,21 @@ export class MiniprogramCi {
 
         ConsoleOutput.ok('Get latest commit messsage succeed');
             
-        try {
-            const uploadResult = await upload({
-                project: this.project,
-                version: version || packageJson.version,
-                desc: desc || info,
-                setting: {
-                    ...this.projectConfig?.setting,
-                    minify: true
-                },
-                onProgressUpdate: this.handleProgress,
-                threads: os.cpus.length
-            });
+        const uploadResult = await upload({
+            project: this.project,
+            version: version || packageJson.version,
+            desc: desc || info,
+            setting: {
+                ...this.projectConfig?.setting,
+                minify: true
+            },
+            onProgressUpdate: this.handleProgress,
+            threads: Math.max(1, os.cpus().length)
+        });
 
-            const resultTable = this.handleUploadResult(uploadResult);
-            
-            ConsoleOutput.info(`Below is the uploaded package information table.\n${resultTable}`);
-        } catch (error: any) {
-            ConsoleOutput.error(error.message);
-        } finally {
-            process.exit(1);
-        }
+        const resultTable = this.handleUploadResult(uploadResult);
+
+        ConsoleOutput.info(`Below is the uploaded package information table.\n${resultTable}`);
     }
 
     async preview() {
