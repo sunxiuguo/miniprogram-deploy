@@ -52,17 +52,19 @@ function initAction() {
         },
     ];
 
-    inquirer.prompt(initQuestions).then(result => {
+    return inquirer.prompt(initQuestions).then(result => {
         writeDeployConfigFile(result, currentDir);
     })
 }
 
 function doctorAction() {
-    checkDeployConfigFile(currentDir);
+    if (!checkDeployConfigFile(currentDir)) {
+        process.exitCode = 1;
+    }
 }
 
 function uploadAction() {
-    new MiniprogramCi(currentDir).upload();
+    return new MiniprogramCi(currentDir).upload();
 }
 
 module.exports = {

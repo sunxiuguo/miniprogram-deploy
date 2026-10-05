@@ -9,6 +9,7 @@
   "scripts": {
     "start": "tsc --watch",
     "build": "rm -rf dist && npm run update-json-schema && tsc",
+    "test": "npm run build && node test/run.js",
     "prepublishOnly": "npm run build",
     "update-json-schema": "typescript-json-schema 'src/types/config-json.ts' '*' --out=src/schemas/config-json-schema.json --id=configdata --required  --strictNullChecks"
   },
