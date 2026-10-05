@@ -7,9 +7,57 @@
 
 ## 一、如何使用
 
-### **安装**
+### **安装 / Installation**
 
-`npm install -g miniprogram-deploy`
+**版本提示：npm 上的 `0.1.2` 不包含本文所述的退出状态和异步错误处理修复。截至 2026-10-05，这些修复已合入 GitHub，但尚未发布到 npm。需要这些修复时，请使用下方经过测试的固定提交源码构建步骤。**
+
+**Version note: npm `0.1.2` does not include the exit-status and asynchronous error-handling fixes described here. As of 2026-10-05, those fixes are merged on GitHub but have not been released to npm. To use them, build the tested, pinned source commit below.**
+
+#### 使用修复后的源码 / Build the source with fixes
+
+以下示例适用于 POSIX shell。Node.js 22 和 24 已通过包装层测试；真实微信服务兼容性仍需在自己的授权环境中验证。
+
+The example uses a POSIX shell. The wrapper tests pass on Node.js 22 and 24; real WeChat service compatibility still needs verification in your own authorized environment.
+
+```sh
+git clone https://github.com/sunxiuguo/miniprogram-deploy.git miniprogram-deploy-source
+cd miniprogram-deploy-source
+git checkout --detach a8608cc30c8648432aa3931b70816774acc2518c
+npm ci
+npm test
+MINIPROGRAM_DEPLOY_CLI="$(pwd)/bin/index.js"
+```
+
+`npm test` 会构建 `dist` 并运行隔离测试，不进行真实上传。在同一个 shell 中切换到自己的小程序项目根目录，将下面的占位路径替换为实际路径；准备好下文说明的 `mp-deploy.config.json` 后运行检查。
+
+`npm test` builds `dist` and runs isolated tests without a real upload. In the same shell, switch to your mini-program project root, replacing the placeholder path below. Prepare `mp-deploy.config.json` as described below before running the check.
+
+```sh
+cd /absolute/path/to/your-mini-program-project
+node "$MINIPROGRAM_DEPLOY_CLI" doctor
+```
+
+需要交互创建配置时，可先运行 `node "$MINIPROGRAM_DEPLOY_CLI" init`。确认构建产物、上传密钥和 IP 白名单就绪后，才运行以下真实上传命令：
+
+To create the configuration interactively, first run `node "$MINIPROGRAM_DEPLOY_CLI" init`. Run the following real upload command only after your build output, upload key, and IP allowlist are ready:
+
+```sh
+node "$MINIPROGRAM_DEPLOY_CLI" upload
+```
+
+源码用法下，本文其余示例中的 `miniprogram-deploy` 均替换为 `node "$MINIPROGRAM_DEPLOY_CLI"`。项目相对路径仍以当前小程序项目目录为准。仓库不包含生成的 `dist`，也没有 `prepare` 脚本，因此直接通过 npm 安装 GitHub 地址不能替代上述构建步骤。
+
+For this source-based setup, replace `miniprogram-deploy` in the remaining examples with `node "$MINIPROGRAM_DEPLOY_CLI"`. Relative project paths still use the current mini-program project directory. The repository does not track generated `dist` files and has no `prepare` script, so installing the GitHub URL through npm is not a substitute for these build steps.
+
+#### npm 已发布版本 / Published npm version
+
+若使用 npm 的历史版本，下面命令安装的是**不包含上述修复**的 `0.1.2`：
+
+For the published npm version, the command below installs `0.1.2`, **without the fixes above**:
+
+```sh
+npm install -g miniprogram-deploy@0.1.2
+```
 
 ### **配置文件**
 
