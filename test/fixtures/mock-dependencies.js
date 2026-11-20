@@ -29,6 +29,12 @@ Module._load = function (request, parent, isMain) {
                 }));
                 if (scenario === 'upload-error') throw new Error('mock upload failure');
                 options.onProgressUpdate({ _msg: 'app.js', _status: 'done' });
+                if (scenario === 'upload-no-package-details') return {};
+                if (scenario === 'upload-empty-package-details') return { subPackageInfo: [] };
+                if (scenario === 'upload-plugin-only') return {
+                    pluginInfo: [{ pluginProviderAppid: 'test-plugin-provider', version: '1.2.3', size: 1024 }],
+                    devPluginId: 'test-development-plugin-id'
+                };
                 return { subPackageInfo: [{ name: '__APP__', size: 1024 }] };
             }
         };

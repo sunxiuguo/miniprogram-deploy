@@ -94,6 +94,22 @@ try {
         assert(result.output.includes('uploaded package information table'));
         assert(result.output.includes('1.00 KB'));
     });
+    for (const scenario of ['upload-no-package-details', 'upload-empty-package-details', 'upload-plugin-only']) {
+        test(`upload succeeds without an empty package table for ${scenario}`, context => {
+            if (scenario === 'upload-plugin-only') {
+                fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, type: 'miniProgramPlugin' }));
+            }
+            const result = run(context, 'upload', { scenario });
+            expectStatus(result, 0);
+            assert(fs.existsSync(result.trace), 'Expected the upload SDK mock to be called');
+            assert(result.output.includes('Upload SDK completed successfully; no package size details were returned.'));
+            assert(result.output.includes('Verify the version in the WeChat management console.'));
+            assert(!result.output.includes('uploaded package information table'));
+            assert(!result.output.includes('PackageType'));
+            assert(!result.output.includes('test-plugin-provider'));
+            assert(!result.output.includes('test-development-plugin-id'));
+        });
+    }
     test('upload uses the CPU count rather than function arity', context => {
         const result = run(context, 'upload');
         assert.strictEqual(JSON.parse(fs.readFileSync(result.trace, 'utf8')).threads, 4);

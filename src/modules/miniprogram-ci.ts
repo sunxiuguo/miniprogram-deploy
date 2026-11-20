@@ -71,7 +71,14 @@ export class MiniprogramCi {
 
         const resultTable = this.handleUploadResult(uploadResult);
 
-        ConsoleOutput.info(`Below is the uploaded package information table.\n${resultTable}`);
+        if (resultTable === null) {
+            ConsoleOutput.info(
+                'Upload SDK completed successfully; no package size details were returned. ' +
+                'Verify the version in the WeChat management console.'
+            );
+        } else {
+            ConsoleOutput.info(`Below is the uploaded package information table.\n${resultTable}`);
+        }
     }
 
     async preview() {
@@ -82,6 +89,9 @@ export class MiniprogramCi {
 
     private handleUploadResult(result: IInnerUploadResult) {
         const { subPackageInfo = [] } = result;
+        if (Array.isArray(subPackageInfo) && subPackageInfo.length === 0) {
+            return null;
+        }
 
         const packageTable = new Table({
             head: ['PackageType', 'Size'],
