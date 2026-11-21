@@ -47,20 +47,21 @@ export class MiniprogramCi {
         if (!this.project) {
             throw new Error('Upload requires an accessible project.config.json');
         }
-        ConsoleOutput.pending('Getting latest commit messsage');
-
         const { version, desc } = this.deployOptions;
+        const uploadVersion = version || require(`${this.rootPath}/package.json`).version;
+        let uploadDesc = desc;
+        if (!uploadDesc) {
+            ConsoleOutput.pending('Getting latest commit messsage');
+            uploadDesc = await getLatestCommitMsg(this.rootPath);
+            ConsoleOutput.ok('Get latest commit messsage succeed');
+        }
 
         const os = require('os');
-        const packageJson = require(`${this.rootPath}/package.json`);
-        const info = await getLatestCommitMsg(this.rootPath);
-
-        ConsoleOutput.ok('Get latest commit messsage succeed');
             
         const uploadResult = await upload({
             project: this.project,
-            version: version || packageJson.version,
-            desc: desc || info,
+            version: uploadVersion,
+            desc: uploadDesc,
             setting: {
                 ...this.projectConfig?.setting,
                 minify: true

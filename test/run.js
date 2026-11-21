@@ -128,6 +128,47 @@ try {
         assert.strictEqual(trace.version, '9.8.7');
         assert.strictEqual(trace.desc, 'custom notes');
     });
+    test('upload with both explicit metadata fields needs neither package.json nor Git', context => {
+        fs.unlinkSync(path.join(context.cwd, 'package.json'));
+        fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, version: '9.8.7', desc: 'artifact build' }));
+        const result = run(context, 'upload', { scenario: 'git-error' });
+        expectStatus(result, 0);
+        const trace = JSON.parse(fs.readFileSync(result.trace, 'utf8'));
+        assert.strictEqual(trace.version, '9.8.7');
+        assert.strictEqual(trace.desc, 'artifact build');
+    });
+    test('explicit version skips package.json but still uses Git for the description', context => {
+        fs.unlinkSync(path.join(context.cwd, 'package.json'));
+        fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, version: '9.8.7', desc: '' }));
+        const result = run(context, 'upload');
+        expectStatus(result, 0);
+        const trace = JSON.parse(fs.readFileSync(result.trace, 'utf8'));
+        assert.strictEqual(trace.version, '9.8.7');
+        assert.strictEqual(trace.desc, 'mock commit message');
+    });
+    test('explicit description skips Git but still uses package.json for the version', context => {
+        fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, version: '', desc: 'artifact build' }));
+        const result = run(context, 'upload', { scenario: 'git-error' });
+        expectStatus(result, 0);
+        const trace = JSON.parse(fs.readFileSync(result.trace, 'utf8'));
+        assert.strictEqual(trace.version, '1.2.3');
+        assert.strictEqual(trace.desc, 'artifact build');
+    });
+    test('omitted version still fails without package.json even with an explicit description', context => {
+        fs.unlinkSync(path.join(context.cwd, 'package.json'));
+        fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, desc: 'artifact build' }));
+        const result = run(context, 'upload');
+        expectStatus(result, 1);
+        assert(result.output.includes('package.json'));
+        assert(!fs.existsSync(result.trace), 'Missing version fallback must not upload');
+    });
+    test('omitted description still fails without Git metadata even with an explicit version', context => {
+        fs.writeFileSync(context.configPath, JSON.stringify({ ...context.config, version: '9.8.7' }));
+        const result = run(context, 'upload', { scenario: 'git-error' });
+        expectStatus(result, 1);
+        assert(result.output.includes('mock git failure'));
+        assert(!fs.existsSync(result.trace), 'Missing description fallback must not upload');
+    });
     test('upload fails when project.config.json is missing', context => {
         fs.unlinkSync(path.join(context.projectPath, 'project.config.json'));
         const result = run(context, 'upload');

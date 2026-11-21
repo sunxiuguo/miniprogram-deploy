@@ -154,8 +154,8 @@ npm install -g miniprogram-deploy@0.1.2
    Configuration validation fails: run `miniprogram-deploy doctor` from your project root and fix the reported fields in `mp-deploy.config.json`. Run `miniprogram-deploy init` first if the file does not exist.
 2. 找不到项目配置：确认 `projectPath` 指向构建产物中 `project.config.json` 所在目录，并在上传前完成小程序构建。相对路径按命令的当前工作目录解析。
    Project configuration is missing: build the mini program first and point `projectPath` to the directory containing the generated `project.config.json`. Relative paths are resolved from the command's working directory.
-3. 版本或备注读取失败：当前实现上传前会读取根目录的 `package.json` 和最近的 Git 提交，即使配置了自定义版本或备注，也需要可读取的 `package.json` 和可用的 Git 仓库。
-   Version or description lookup fails: the current implementation reads the root `package.json` and latest Git commit before uploading, including when custom values are configured. Keep both the package file and Git repository available.
+3. 版本或备注读取失败：当前分支仅在 `version` 未填或为空时读取当前工作目录的 `package.json`，仅在 `desc` 未填或为空时读取最近的 Git 提交。仅下载构建产物的 CI 任务可在 `mp-deploy.config.json` 中同时指定非空 `version` 和 `desc`；仍需正确配置 `projectPath` 和上传密钥。这不适用于 npm `0.1.2` 或上方固定的旧源码提交。
+   Version or description lookup fails: this branch reads the working directory's `package.json` only if `version` is omitted or empty, and the latest Git commit only if `desc` is omitted or empty. A CI job that only downloads build artifacts can set both to non-empty values in `mp-deploy.config.json`; it still needs the correct `projectPath` and upload key. This does not apply to npm `0.1.2` or the earlier source commit pinned above.
 4. SDK 报告鉴权错误：检查管理员配置的代码上传密钥和 IP 白名单。不要将私钥、访问令牌或完整敏感日志提交到仓库或 issue。
    The SDK reports an authentication error: check the administrator-configured upload key and IP allowlist. Never commit private keys or access tokens, or paste sensitive logs into issues.
 
